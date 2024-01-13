@@ -132,7 +132,22 @@ fun HomeScreen(
                 ).show()
             }
         ) {
-            Text("Second Request")
+            Text("Third Request")
+        }
+
+        Button(
+            modifier = Modifier.padding(10.dp),
+            onClick = {
+                myViewModel.postRequest("Gerald")
+
+                Toast.makeText(
+                    context,
+                    "Fired post bad boy",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        ) {
+            Text("Post Stuff")
         }
     }
 }

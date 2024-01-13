@@ -51,4 +51,14 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    fun postRequest(name: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.postStuff(name)
+
+            if(response.isSuccessful){
+                println("Here it is ${response.body()}")
+            }
+        }
+    }
 }

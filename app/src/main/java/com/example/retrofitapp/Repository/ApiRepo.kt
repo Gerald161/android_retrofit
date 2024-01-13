@@ -2,6 +2,7 @@ package com.example.retrofitapp.Repository
 
 import com.example.retrofitapp.api.SimpleApi
 import com.example.retrofitapp.model.Post
+import com.example.retrofitapp.model.Status
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -22,5 +23,9 @@ class ApiRepo @Inject constructor(
 
     suspend fun getPost4(name: String, rank: String): Response<List<Post>>{
         return simpleApi.getPosts3(name, rank)
+    }
+
+    suspend fun postStuff(name: String): Response<Status>{
+        return simpleApi.postStuff(name)
     }
 }
