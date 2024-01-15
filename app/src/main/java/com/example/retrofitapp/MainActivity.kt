@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.retrofitapp.Navigation.Navigation
 import com.example.retrofitapp.ui.theme.RetrofitAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +23,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RetrofitAppTheme {
+                navController = rememberNavController()
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

@@ -12,8 +12,6 @@ import com.example.retrofitapp.Navigation.Screens.HomeScreen
 fun Navigation(
     navController: NavHostController
 ){
-    val myViewModel = hiltViewModel<MainViewModel>()
-
     NavHost(
         navController = navController,
         startDestination = Screen.HomeScreen.route

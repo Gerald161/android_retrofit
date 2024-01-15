@@ -1,9 +1,14 @@
 package com.example.retrofitapp.Navigation.Screens
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,13 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.retrofitapp.MainViewModel
+import java.io.File
+import java.lang.NumberFormatException
 
 @Composable
 fun HomeScreen(
@@ -37,6 +47,52 @@ fun HomeScreen(
     var num by remember { mutableStateOf("") }
 
     var name by remember { mutableStateOf("") }
+
+    var selectedUri by remember{ mutableStateOf<Uri?>(null) }
+
+    var selectedUris by remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
+
+    var allFilesSelected: MutableList<File> = arrayListOf()
+
+    val singlePhotoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedUri = it
+
+            val file = File(context.cacheDir, "image.jpg")
+
+            val inputStream = context.contentResolver.openInputStream(it!!)
+
+            file.outputStream().use {outputstream ->
+                inputStream!!.copyTo(outputstream)
+            }
+
+            myViewModel.uploadImage(file)
+        }
+    )
+
+    val multiplePhotoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { allUris ->
+            selectedUris = allUris
+
+            allUris.forEachIndexed { index, uri ->
+                val file = File(context.cacheDir, "image_${index}.jpg")
+
+                val inputStream = context.contentResolver.openInputStream(uri!!)
+
+                file.outputStream().use {outputstream ->
+                    inputStream!!.copyTo(outputstream)
+                }
+
+                allFilesSelected.add(file)
+            }
+
+            myViewModel.uploadMultipleImages(allFilesSelected)
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -62,21 +118,6 @@ fun HomeScreen(
             Text("First Request")
         }
 
-        Button(
-            modifier = Modifier.padding(10.dp),
-            onClick = {
-                myViewModel.normalRequest2(num.toInt())
-
-                Toast.makeText(
-                    context,
-                    "Fired second bad boy",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        ) {
-            Text("Second Request")
-        }
-
         TextField(
             value = num,
             onValueChange = {
@@ -94,6 +135,29 @@ fun HomeScreen(
         Button(
             modifier = Modifier.padding(10.dp),
             onClick = {
+                try {
+                    myViewModel.normalRequest2(num.toInt())
+
+                    Toast.makeText(
+                        context,
+                        "Fired second bad boy",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }catch(e: NumberFormatException){
+                    Toast.makeText(
+                        context,
+                        "Type a number",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        ) {
+            Text("Second Request")
+        }
+
+        Button(
+            modifier = Modifier.padding(10.dp),
+            onClick = {
                 myViewModel.normalRequest3(name)
 
                 Toast.makeText(
@@ -103,7 +167,7 @@ fun HomeScreen(
                 ).show()
             }
         ) {
-            Text("Second Request")
+            Text("Third Request")
         }
 
         TextField(
@@ -123,16 +187,16 @@ fun HomeScreen(
         Button(
             modifier = Modifier.padding(10.dp),
             onClick = {
-                myViewModel.normalRequest4("Kofi", "gracias")
+                myViewModel.normalRequest4("Kofi", "20")
 
                 Toast.makeText(
                     context,
-                    "Fired third bad boy",
+                    "Fired fourth bad boy",
                     Toast.LENGTH_SHORT
                 ).show()
             }
         ) {
-            Text("Third Request")
+            Text("Fourth Request")
         }
 
         Button(
@@ -149,5 +213,28 @@ fun HomeScreen(
         ) {
             Text("Post Stuff")
         }
+
+        Button(onClick = {
+            singlePhotoPicker.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }) {
+            Text(text = "Select and upload one photo")
+        }
+
+        Button(onClick = {
+            multiplePhotoPicker.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }) {
+            Text(text = "Select and upload multiple photos")
+        }
+
+//        AsyncImage(
+//            model = selectedUri,
+//            contentDescription = null,
+//            modifier = Modifier.fillMaxWidth(),
+//            contentScale = ContentScale.Fit
+//        )
     }
 }

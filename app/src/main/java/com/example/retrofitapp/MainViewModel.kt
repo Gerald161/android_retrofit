@@ -6,6 +6,7 @@ import com.example.retrofitapp.Repository.ApiRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,7 +18,7 @@ class MainViewModel @Inject constructor(
             val response = repository.getPost()
 
             if(response.isSuccessful){
-                println("Here it is ${response.body()?.name}")
+                println("Here it is ${response.body()}")
             }
         }
     }
@@ -27,7 +28,7 @@ class MainViewModel @Inject constructor(
             val response = repository.getPost2(number)
 
             if(response.isSuccessful){
-                println("Here it is ${response.body()?.name}")
+                println("Here it is ${response.body()}")
             }
         }
     }
@@ -37,7 +38,7 @@ class MainViewModel @Inject constructor(
             val response = repository.getPost3(name)
 
             if(response.isSuccessful){
-                println("Here it is ${response.body()?.name}")
+                println("Here it is ${response.body()}")
             }
         }
     }
@@ -55,6 +56,26 @@ class MainViewModel @Inject constructor(
     fun postRequest(name: String){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.postStuff(name)
+
+            if(response.isSuccessful){
+                println("Here it is ${response.body()}")
+            }
+        }
+    }
+
+    fun uploadImage(file: File){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.uploadImage(file)
+
+            if(response.isSuccessful){
+                println("Here it is ${response.body()}")
+            }
+        }
+    }
+
+    fun uploadMultipleImages(files: List<File>){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.uploadMultipleImages(files)
 
             if(response.isSuccessful){
                 println("Here it is ${response.body()}")

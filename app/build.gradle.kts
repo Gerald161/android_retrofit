@@ -89,4 +89,7 @@ dependencies {
 
     // KotlinX Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
