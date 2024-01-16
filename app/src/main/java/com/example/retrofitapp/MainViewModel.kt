@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun normalRequest2(number: Int){
+    fun normalRequest2(number: Int=2){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getPost2(number)
 
@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun normalRequest3(name: String){
+    fun normalRequest3(name: String="Gerald"){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getPost3(name)
 
@@ -43,7 +43,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun normalRequest4(name: String, rank: String){
+    fun normalRequest4(name: String="Kobby", rank: String="Unstoppable"){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getPost4(name, rank)
 
@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun postRequest(name: String){
+    fun postRequest(name: String="Gifty"){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.postStuff(name)
 
@@ -76,6 +76,16 @@ class MainViewModel @Inject constructor(
     fun uploadMultipleImages(files: List<File>){
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.uploadMultipleImages(files)
+
+            if(response.isSuccessful){
+                println("Here it is ${response.body()}")
+            }
+        }
+    }
+
+    fun deleteRequest(slug: String="image"){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.deletePost(slug)
 
             if(response.isSuccessful){
                 println("Here it is ${response.body()}")

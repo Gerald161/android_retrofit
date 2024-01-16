@@ -48,49 +48,51 @@ fun HomeScreen(
 
     var name by remember { mutableStateOf("") }
 
-    var selectedUri by remember{ mutableStateOf<Uri?>(null) }
+    var slug by remember { mutableStateOf("") }
 
-    var selectedUris by remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }
+//    var selectedUri by remember{ mutableStateOf<Uri?>(null) }
+
+//    var selectedUris by remember {
+//        mutableStateOf<List<Uri>>(emptyList())
+//    }
 
     var allFilesSelected: MutableList<File> = arrayListOf()
 
     val singlePhotoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = {
-            selectedUri = it
+            if(it !== null){
+                val file = File(context.cacheDir, "image.jpg")
 
-            val file = File(context.cacheDir, "image.jpg")
+                val inputStream = context.contentResolver.openInputStream(it)
 
-            val inputStream = context.contentResolver.openInputStream(it!!)
+                file.outputStream().use {outputstream ->
+                    inputStream!!.copyTo(outputstream)
+                }
 
-            file.outputStream().use {outputstream ->
-                inputStream!!.copyTo(outputstream)
+                myViewModel.uploadImage(file)
             }
-
-            myViewModel.uploadImage(file)
         }
     )
 
     val multiplePhotoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { allUris ->
-            selectedUris = allUris
+            if(allUris.isNotEmpty()){
+                allUris.forEachIndexed { index, uri ->
+                    val file = File(context.cacheDir, "image_${index}.jpg")
 
-            allUris.forEachIndexed { index, uri ->
-                val file = File(context.cacheDir, "image_${index}.jpg")
+                    val inputStream = context.contentResolver.openInputStream(uri)
 
-                val inputStream = context.contentResolver.openInputStream(uri!!)
+                    file.outputStream().use {outputstream ->
+                        inputStream!!.copyTo(outputstream)
+                    }
 
-                file.outputStream().use {outputstream ->
-                    inputStream!!.copyTo(outputstream)
+                    allFilesSelected.add(file)
                 }
 
-                allFilesSelected.add(file)
+                myViewModel.uploadMultipleImages(allFilesSelected)
             }
-
-            myViewModel.uploadMultipleImages(allFilesSelected)
         }
     )
 
@@ -136,7 +138,9 @@ fun HomeScreen(
             modifier = Modifier.padding(10.dp),
             onClick = {
                 try {
-                    myViewModel.normalRequest2(num.toInt())
+//                    myViewModel.normalRequest2(num.toInt())
+
+                    myViewModel.normalRequest2()
 
                     Toast.makeText(
                         context,
@@ -236,5 +240,30 @@ fun HomeScreen(
 //            modifier = Modifier.fillMaxWidth(),
 //            contentScale = ContentScale.Fit
 //        )
+
+        TextField(
+            value = slug,
+            onValueChange = {
+                slug = it
+            },
+            label = {
+                Text("Picture name without extension")
+            },
+        )
+
+        Button(
+            modifier = Modifier.padding(10.dp),
+            onClick = {
+                myViewModel.deleteRequest(slug)
+
+                Toast.makeText(
+                    context,
+                    "Fired defcon",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        ) {
+            Text("Delete picture request")
+        }
     }
 }

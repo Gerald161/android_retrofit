@@ -52,7 +52,7 @@ interface SimpleApi {
         @Part image: List<MultipartBody.Part>
     ) : Response<Status>
 
-    @DELETE("search/remove/{slug}")
+    @DELETE("/search/remove/{slug}")
     suspend fun deletePicture(
         @Path("slug")slug: String
     ) : Response<Status>

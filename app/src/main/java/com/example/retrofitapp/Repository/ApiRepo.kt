@@ -59,4 +59,8 @@ class ApiRepo @Inject constructor(
             image = allMultipartBodies
         )
     }
+
+    suspend fun deletePost(slug: String): Response<Status>{
+        return simpleApi.deletePicture(slug)
+    }
 }
