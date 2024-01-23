@@ -23,7 +23,7 @@ object AppModule {
     fun getApi(): SimpleApi{
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://192.168.252.69:8000")
+            .baseUrl("http://192.168.183.69:8000")
             .build()
             .create(SimpleApi::class.java)
     }
